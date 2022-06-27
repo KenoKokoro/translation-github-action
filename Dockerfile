@@ -1,7 +1,10 @@
 FROM node:slim
 
-COPY . .
+COPY . /app
 
-RUN npm install --production
+WORKDIR /app
+
+RUN npm install
+RUN npm run build
 
 ENTRYPOINT ["node", "/lib/main.js"]

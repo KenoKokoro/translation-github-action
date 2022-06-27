@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  action:
+    container_name: translation_github_action
+    working_dir: /app
+    build:
+      context: .docker
+    volumes:
+      - .:/app
+    environment:
+      - ROOT=${CONTAINER_ROOT}
+      - PUID=${DOCKER_HOST_UID}
+      - PGID=${DOCKER_HOST_GID}
