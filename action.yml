@@ -2,9 +2,18 @@ name: 'Container Action Template'
 description: 'Get started with Container actions'
 author: 'GitHub'
 inputs:
-  myInput:
-    description: 'Input to use'
-    default: 'world'
+  source_language:
+    description: 'Your source language code'
+    required: true
+
+  source_file_paths:
+    description: 'Location to your source files'
+    required: true
+
+  follow_symbolic_links:
+    description: 'Follow symlinks'
+    default: true
+
 runs:
   using: 'docker'
   image: 'Dockerfile'
