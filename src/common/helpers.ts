@@ -30,11 +30,11 @@ export const create_files_from_strings = async (files_to_strings_map = {}): Prom
         continue;
       }
 
-      fs.writeFileSync(object.absolute_path, JSON.stringify(object.strings), encoding);
+      fs.writeFileSync(object.absolute_path, JSON.stringify(object.strings, null, 4), encoding);
       console.log(`File ${object.absolute_path} updated successfully`);
       modified_files.push(object.absolute_path);
     } else {
-      fs.writeFileSync(object.absolute_path, JSON.stringify(object.strings), encoding);
+      fs.writeFileSync(object.absolute_path, JSON.stringify(object.strings, null, 4), encoding);
       console.log(`File ${object.absolute_path} created successfully`);
       modified_files.push(object.absolute_path);
     }
