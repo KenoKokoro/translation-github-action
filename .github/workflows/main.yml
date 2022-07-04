@@ -24,8 +24,8 @@ jobs:
 
       - name: Prepare for PR
         run: |
-          git config user.name 'Stefan Brankovikj'
-          git config user.email 'stefan.brankovik@users.noreply.github.com'
+          git config user.name 'Stefan Brankovik'
+          git config user.email 'sbk@easytranslate.com'
           git add .
           git commit -am "String updates"
 
@@ -33,4 +33,4 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN}}
+          token: ${{ secrets.ACCESS_TOKEN}}
