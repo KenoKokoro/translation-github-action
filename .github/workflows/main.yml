@@ -34,7 +34,7 @@ jobs:
           string_library_id: '62bdd58660666d016074a805'
 
       - name: Update the pull request
-        if: steps.pull_easytranslate.outputs.outcome === 'continue'
+        if: ${{ steps.pull_easytranslate.outputs.outcome == 'continue' }}
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
