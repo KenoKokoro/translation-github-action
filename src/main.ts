@@ -2,8 +2,8 @@ import {RequestDto} from './common/validator';
 import {StringLibrary} from "./easytranslate/string-library";
 
 const core = require('@actions/core');
-const cli_exec = require('@actions/exec');
 const glob = require('@actions/glob');
+const github = require('@actions/github');
 const helpers = require('./common/helpers');
 const validation = require('./common/validator');
 
@@ -73,9 +73,11 @@ async function pull(strings_api: StringLibrary, request_dto: RequestDto) {
 }
 
 async function run() {
+
   try {
     const request_dto = validation.validateRequest();
     const easytranslate_api = require('./easytranslate/api');
+    console.log()
 
     if (request_dto.action === 'push') {
       await push(easytranslate_api.strings(), request_dto);
