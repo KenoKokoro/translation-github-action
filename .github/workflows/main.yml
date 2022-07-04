@@ -1,6 +1,6 @@
 on:
   pull_request:
-    types: [ opened , reopened ]
+    types: [ opened , reopened , edited ]
 
 jobs:
   download_strings:
@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Execute our action
         uses: ./
@@ -24,17 +26,10 @@ jobs:
           team_name: 'x-force-deadpool'
           string_library_id: '62bdd58660666d016074a805'
 
-      - name: Prepare for pull request
+      - name: Update the pull request
         run: |
           git config user.name 'Stefan Brankovik'
           git config user.email 'stefan.brankovik@gmail.com'
           git add .
           git commit -am 'Updating strings'
-          git push origin HEAD:
-
-      - name: Create Pull Request
-        uses: repo-sync/pull-request@v2
-        with:
-          source_branch: 'stefan/strings-update'
-          destination_branch: 'main'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git push
