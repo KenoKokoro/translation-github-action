@@ -1,9 +1,10 @@
 on:
   pull_request:
-    types: [ opened , reopened , edited ]
+    types: [ labeled ]
 
 jobs:
   download_strings:
+    if: ${{ github.event.label.name == 'pull-easytranslate-strings' }}
     runs-on: ubuntu-latest
     name: Download strings from EasyTranslate
     steps:
