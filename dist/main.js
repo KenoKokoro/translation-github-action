@@ -17,8 +17,8 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = require('@actions/core');
-const cli_exec = require('@actions/exec');
 const glob = require('@actions/glob');
+const github = require('@actions/github');
 const helpers = require('./common/helpers');
 const validation = require('./common/validator');
 function push(strings_api, request_dto) {
@@ -96,9 +96,11 @@ function pull(strings_api, request_dto) {
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log(github.context);
         try {
             const request_dto = validation.validateRequest();
             const easytranslate_api = require('./easytranslate/api');
+            console.log();
             if (request_dto.action === 'push') {
                 yield push(easytranslate_api.strings(), request_dto);
             }

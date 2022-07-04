@@ -1,4 +1,6 @@
-on: [ push ]
+on:
+  pull_request:
+    types: [ opened ]
 
 jobs:
   download_strings:
@@ -10,7 +12,7 @@ jobs:
 
       - name: Execute our action
         uses: ./
-        id: hello
+        id: sync-strings
         with:
           easytranslate_action: 'pull'
           source_language: 'en'
@@ -26,10 +28,9 @@ jobs:
         run: |
           git config user.name 'Stefan Brankovik'
           git config user.email 'stefan.brankovik@gmail.com'
-          git checkout -b stefan/strings-update
-          git push origin stefan/strings-update
           git add .
           git commit -am 'Updating strings'
+          git push origin
 
       - name: Create Pull Request
         uses: repo-sync/pull-request@v2
