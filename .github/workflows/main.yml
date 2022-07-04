@@ -27,6 +27,7 @@ jobs:
           git config user.name 'Stefan Brankovik'
           git config user.email 'stefan.brankovik@gmail.com'
           git checkout -b stefan/strings-update
+          git push origin stefan/strings-update
           git add .
           git commit -am 'Updating strings'
 
