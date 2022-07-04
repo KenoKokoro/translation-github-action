@@ -82,10 +82,12 @@ function pull(strings_api, request_dto) {
         }
         const modified_files = yield helpers.create_files_from_strings(files_to_content_map);
         if (modified_files.length === 0) {
+            core.setOutput('outcome', 'skip');
             console.log('Executed without any changes');
             return;
         }
         console.log(`Modified files: ${modified_files}`);
+        core.setOutput('outcome', 'continue');
     });
 }
 function run() {
