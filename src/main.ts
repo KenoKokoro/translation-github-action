@@ -73,7 +73,7 @@ async function pull(strings_api: StringLibrary, request_dto: RequestDto) {
 }
 
 async function run() {
-  console.log(github.context);
+  console.log(github);
 
   try {
     const request_dto = validation.validateRequest();
