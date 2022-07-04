@@ -32,8 +32,7 @@ jobs:
           git commit -am 'Updating strings'
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+        uses: repo-sync/pull-request@v2
         with:
-          token: ${{ secrets.ACCESS_TOKEN }}
-          base: main
-          branch-suffix: timestamp
+          destination_branch: "main"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
