@@ -86,16 +86,10 @@ function pull(strings_api, request_dto) {
             return;
         }
         console.log(`Modified files: ${modified_files}`);
-        // const date = new Date();
-        // await cli_exec.exec("git config user.name 'Stefan Brankovik'")
-        // await cli_exec.exec("git config user.email 'stefan.brankovik@gmail.com'")
-        // await cli_exec.exec("git add .")
-        // await cli_exec.exec(`git commit -m "Adding new strings ${date.toISOString()}"`)
     });
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('Lets go!');
         try {
             const request_dto = validation.validateRequest();
             const easytranslate_api = require('./easytranslate/api');
