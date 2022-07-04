@@ -7,11 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Download strings from EasyTranslate
     steps:
-      #      - name: Checkout
-      #        uses: actions/checkout@v3
-      #        with:
-      #          token: ${{ secrets.ACCESS_TOKEN }}
-      #          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
