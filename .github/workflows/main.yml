@@ -5,10 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     name: A job to say hello
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Execute our action
         uses: ./
         id: hello
@@ -22,13 +21,15 @@ jobs:
           base_api_url: 'https://api.platform.testing.easytranslate.com'
           team_name: 'x-force-deadpool'
           string_library_id: '62bdd58660666d016074a805'
+
       - name: Prepare for PR
         run: |
           git config user.name 'Stefan Brankovikj'
           git config user.email 'stefan.brankovik@users.noreply.github.com'
           git commit -am "String updates"
+
       - name: Create Pull Request
-      id: cpr
-      uses: peter-evans/create-pull-request@v4
-      with:
-        token: ${{ secrets.GITHUB_ACCESS_TOKEN}}
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN}}
