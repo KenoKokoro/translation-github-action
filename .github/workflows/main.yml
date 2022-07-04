@@ -13,5 +13,22 @@ jobs:
         uses: ./
         id: hello
         with:
-          source_language: "en"
-          source_file_paths: "resources/**/en/**.json"
+          easytranslate_action: 'pull'
+          source_language: 'en'
+          source_root_folder: 'resources'
+          translation_file_paths: 'files/**/**json'
+          target_languages: 'da,de'
+          access_token: ${{ secrets.EASYTRANSLATE_API_ACCESS_TOKEN }}
+          base_api_url: 'https://api.platform.testing.easytranslate.com'
+          team_name: 'x-force-deadpool'
+          string_library_id: '62bdd58660666d016074a805'
+      - name: Prepare for PR
+        run: |
+          git config user.name 'Stefan Brankovikj'
+          git config user.email 'stefan.brankovik@users.noreply.github.com'
+          git commit -am "String updates"
+      - name: Create Pull Request
+      id: cpr
+      uses: peter-evans/create-pull-request@v4
+      with:
+        token: ${{ secrets.GITHUB_ACCESS_TOKEN}}

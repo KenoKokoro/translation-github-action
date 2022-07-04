@@ -6,3 +6,4 @@ bin/
 #resources
 .env.local
 .idea
+.secrets
