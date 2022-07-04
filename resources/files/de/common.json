@@ -1,1 +1,4 @@
-{"global.email":"This will create new file!","global.welcome":null}
+{
+    "global.email": "This will create new file!",
+    "global.welcome": "String that will update the PR"
+}
