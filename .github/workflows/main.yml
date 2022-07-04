@@ -1,9 +1,9 @@
 on: [ push ]
 
 jobs:
-  hello_world_job:
+  download_strings:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: Download strings from EasyTranslate
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -22,15 +22,14 @@ jobs:
           team_name: 'x-force-deadpool'
           string_library_id: '62bdd58660666d016074a805'
 
-      - name: Prepare for PR
+      - name: Prepare for pull request
         run: |
           git config user.name 'Stefan Brankovik'
-          git config user.email 'sbk@easytranslate.com'
-          git add .
-          git commit -am "String updates"
+          git config user.email 'stefan.brankovik@gmail.com'
 
       - name: Create Pull Request
-        id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
-          token: ${{ secrets.ACCESS_TOKEN}}
+          token: ${{ secrets.ACCESS_TOKEN }}
+          base: main
+          branch-suffix: timestamp

@@ -17,6 +17,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = require('@actions/core');
+const cli_exec = require('@actions/exec');
 const glob = require('@actions/glob');
 const helpers = require('./common/helpers');
 const validation = require('./common/validator');
@@ -80,7 +81,17 @@ function pull(strings_api, request_dto) {
                 files_to_content_map[file_name].strings[key_name] = translation.text;
             }
         }
-        yield helpers.create_files_from_strings(files_to_content_map);
+        const modified_files = yield helpers.create_files_from_strings(files_to_content_map);
+        if (modified_files.length === 0) {
+            console.log('Executed without any changes');
+            return;
+        }
+        console.log(`Modified files: ${modified_files}`);
+        // const date = new Date();
+        // await cli_exec.exec("git config user.name 'Stefan Brankovik'")
+        // await cli_exec.exec("git config user.email 'stefan.brankovik@gmail.com'")
+        // await cli_exec.exec("git add .")
+        // await cli_exec.exec(`git commit -m "Adding new strings ${date.toISOString()}"`)
     });
 }
 function run() {

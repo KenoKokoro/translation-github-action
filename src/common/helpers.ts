@@ -14,37 +14,31 @@ export const find_language_code_from_file_path = (path: string, all_languages: s
 
 export const path = require('path');
 
-export const create_files_from_strings = async (files_to_strings_map = {}) => {
+export const create_files_from_strings = async (files_to_strings_map = {}): Promise<string[]> => {
+  const modified_files: string[] = [];
+
   for (const key in files_to_strings_map) {
     const object = files_to_strings_map[key];
     await mkdirp(object.folder_path);
+    const encoding = 'utf8';
+
     if (fs.existsSync(object.absolute_path)) {
-      await fs.readFile(object.absolute_path, 'utf8', (error, data) => {
-        if (error) {
-          throw error;
-        }
-        const file_content = JSON.parse(data);
-        if (isEqual(file_content, object.strings)) {
-          console.log(`File ${object.absolute_path} seems to be in sync`);
-          return;
-        }
+      const existing_content = fs.readFileSync(object.absolute_path, encoding);
+      const file_content = JSON.parse(existing_content);
+      if (isEqual(file_content, object.strings)) {
+        console.log(`File ${object.absolute_path} seems to be in sync`);
+        continue;
+      }
 
-        fs.writeFile(object.absolute_path, JSON.stringify(object.strings), 'utf8', (error) => {
-          if (error) {
-            throw error;
-          }
-
-          console.log(`File ${object.absolute_path} updated successfully`);
-        });
-      });
+      fs.writeFileSync(object.absolute_path, JSON.stringify(object.strings), encoding);
+      console.log(`File ${object.absolute_path} updated successfully`);
+      modified_files.push(object.absolute_path);
     } else {
-      await fs.writeFile(object.absolute_path, JSON.stringify(object.strings), 'utf8', (error) => {
-        if (error) {
-          throw error;
-        }
-
-        console.log(`File ${object.absolute_path} created successfully`);
-      })
+      fs.writeFileSync(object.absolute_path, JSON.stringify(object.strings), encoding);
+      console.log(`File ${object.absolute_path} created successfully`);
+      modified_files.push(object.absolute_path);
     }
   }
+
+  return modified_files;
 }
