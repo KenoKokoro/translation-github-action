@@ -3,7 +3,7 @@ on:
     types: [ labeled ]
 
 jobs:
-  download_strings:
+  pull_strings_from_easytranslate:
     if: ${{ github.event.label.name == 'pull-easytranslate-strings' }}
     runs-on: ubuntu-latest
     name: Download strings from EasyTranslate
