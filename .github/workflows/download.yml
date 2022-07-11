@@ -4,7 +4,7 @@ on:
 
 jobs:
   pull_strings_from_easytranslate:
-    if: ${{ github.event.label.name == 'pull-easytranslate-strings' }}
+    if: ${{ github.event.label.name == 'download-easytranslate-strings' }}
     runs-on: ubuntu-latest
     name: Download strings from EasyTranslate
     steps:
@@ -23,7 +23,7 @@ jobs:
         uses: ./
         id: pull_easytranslate
         with:
-          easytranslate_action: 'pull'
+          easytranslate_action: 'download'
           source_language: 'en'
           source_root_folder: 'resources'
           translation_file_paths: 'files/**/**json'
@@ -32,6 +32,7 @@ jobs:
           base_api_url: 'https://api.platform.testing.easytranslate.com'
           team_name: 'x-force-deadpool'
           string_library_id: '62bdd58660666d016074a805'
+          download_strings_format: 'flat'
 
       - name: Update the pull request
         if: ${{ steps.pull_easytranslate.outputs.outcome == 'continue' }}

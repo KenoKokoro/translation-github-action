@@ -39,6 +39,10 @@ inputs:
     description: 'EasyTranslate String library ID that will store your translations'
     required: true
 
+  download_strings_format:
+    description: 'Defines the format of the JSON object inside the downloaded strings. Works only with `easytranslate_action: download`'
+    required: false
+
 runs:
   using: 'docker'
   image: 'Dockerfile'

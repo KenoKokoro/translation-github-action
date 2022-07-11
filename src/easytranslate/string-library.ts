@@ -1,29 +1,24 @@
-import {HttpClient} from "@actions/http-client";
-import {TypedResponse} from "@actions/http-client/lib/interfaces";
-import {ApiClientConstructor} from "../common/validator";
+import axios, {AxiosInstance, AxiosResponse} from 'axios';
+import {ApiClientConstructor, RequestDto} from "../common/validator";
 
-const client = require('@actions/http-client');
 const GATEWAY_PREFIX = 'strings-library'
 
 export class StringLibrary {
   private readonly base_url: string;
   private readonly library_id: string;
-  private http: HttpClient;
+  private http: AxiosInstance;
 
   constructor(dto: ApiClientConstructor) {
     this.base_url = `${dto.base_url}/${GATEWAY_PREFIX}/api/v1/teams/${dto.team_name}`;
     this.library_id = dto.string_library_id;
-    this.http = new client.HttpClient(
-      'github-action-v1',
-      [],
-      {
-        headers: {
-          authorization: `Bearer ${dto.access_token}`,
-          accept: 'application/json',
-          'content-type': 'application/json'
-        }
+    this.http = axios.create({
+      baseURL: this.base_url,
+      headers: {
+        authorization: `Bearer ${dto.access_token}`,
+        accept: 'application/json',
+        'content-type': 'application/json'
       }
-    )
+    })
   }
 
   async syncToLibrary(files: Array<any>, source_language: string, target_languages: Array<string>) {
@@ -76,13 +71,28 @@ export class StringLibrary {
     }
   }
 
-  async getTranslations(target_languages: string[], page: number = 1, per_page: number = 2) {
+  async getTranslations(target_languages: string[], page: number = 1, per_page: number = 50) {
     let query = `page=${page}&perPage=${per_page}`;
     for (const index in target_languages) {
       query += `&filters[target_languages][${index}]=${target_languages[index]}`;
     }
     const response: any = await this.get(`libraries/${this.library_id}/bilingual?${query}`);
 
+    return response.data;
+  }
+
+  async download(request_dto: RequestDto): Promise<Buffer> {
+    const response = await this.post(
+      `libraries/${this.library_id}/download`,
+      {
+        type: 'library-download',
+        attributes: {
+          languages: request_dto.all_languages,
+          unpack_strings: request_dto.download_strings_format === 'nested'
+        }
+      },
+      {responseType: "arraybuffer"}
+    );
     return response.data;
   }
 
@@ -94,15 +104,16 @@ export class StringLibrary {
     return file.replace(`/${language_code}/`, `/${source_language}/`);
   }
 
-  private async post(path: string, payload: any): Promise<TypedResponse<any>> {
+  private async post(path: string, payload: any, options = {}): Promise<AxiosResponse> {
     try {
-      return await this.http.postJson(
-        `${this.base_url}/${path}`,
-        {data: payload}
+      return await this.http.post(
+        `${path}`,
+        {data: payload},
+        options
       );
     } catch (error: any) {
       if (error.statusCode < 500) {
-        throw Error(error.result.data.message);
+        throw Error(error.data.message);
       }
       throw error;
     }
@@ -110,12 +121,11 @@ export class StringLibrary {
 
   private async get(path: string) {
     try {
-      const response = await this.http.getJson(`${this.base_url}/${path}`);
-
-      return response.result;
+      const response = await this.http.get(path);
+      return response.data;
     } catch (error: any) {
       if (error.statusCode < 500) {
-        throw Error(error.result.data.message);
+        throw Error(error.data.message);
       }
       throw error;
     }

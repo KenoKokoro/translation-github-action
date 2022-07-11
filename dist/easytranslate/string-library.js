@@ -20,15 +20,19 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StringLibrary = void 0;
-const client = require('@actions/http-client');
+const axios_1 = __importDefault(require("axios"));
 const GATEWAY_PREFIX = 'strings-library';
 class StringLibrary {
     constructor(dto) {
         this.base_url = `${dto.base_url}/${GATEWAY_PREFIX}/api/v1/teams/${dto.team_name}`;
         this.library_id = dto.string_library_id;
-        this.http = new client.HttpClient('github-action-v1', [], {
+        this.http = axios_1.default.create({
+            baseURL: this.base_url,
             headers: {
                 authorization: `Bearer ${dto.access_token}`,
                 accept: 'application/json',
@@ -81,7 +85,7 @@ class StringLibrary {
             }
         });
     }
-    getTranslations(target_languages, page = 1, per_page = 2) {
+    getTranslations(target_languages, page = 1, per_page = 50) {
         return __awaiter(this, void 0, void 0, function* () {
             let query = `page=${page}&perPage=${per_page}`;
             for (const index in target_languages) {
@@ -91,20 +95,32 @@ class StringLibrary {
             return response.data;
         });
     }
+    download(request_dto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield this.post(`libraries/${this.library_id}/download`, {
+                type: 'library-download',
+                attributes: {
+                    languages: request_dto.all_languages,
+                    unpack_strings: request_dto.download_strings_format === 'nested'
+                }
+            }, { responseType: "arraybuffer" });
+            return response.data;
+        });
+    }
     static createKeyFromFile(file, source_language, language_code) {
         if (file[0] === '/') {
             file = file.slice(1);
         }
         return file.replace(`/${language_code}/`, `/${source_language}/`);
     }
-    post(path, payload) {
+    post(path, payload, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.http.postJson(`${this.base_url}/${path}`, { data: payload });
+                return yield this.http.post(`${path}`, { data: payload }, options);
             }
             catch (error) {
                 if (error.statusCode < 500) {
-                    throw Error(error.result.data.message);
+                    throw Error(error.data.message);
                 }
                 throw error;
             }
@@ -113,12 +129,12 @@ class StringLibrary {
     get(path) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.http.getJson(`${this.base_url}/${path}`);
-                return response.result;
+                const response = yield this.http.get(path);
+                return response.data;
             }
             catch (error) {
                 if (error.statusCode < 500) {
-                    throw Error(error.result.data.message);
+                    throw Error(error.data.message);
                 }
                 throw error;
             }

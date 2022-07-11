@@ -90,6 +90,13 @@ function pull(strings_api, request_dto) {
         core.setOutput('outcome', 'continue');
     });
 }
+function download(strings_api, request_dto) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const content = yield strings_api.download(request_dto);
+        yield helpers.extract_zip_file(request_dto.source_root_folder, content);
+        core.setOutput('outcome', 'continue');
+    });
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -101,11 +108,15 @@ function run() {
             else if (request_dto.action === 'pull') {
                 yield pull(easytranslate_api.strings(), request_dto);
             }
+            else if (request_dto.action === 'download') {
+                yield download(easytranslate_api.strings(), request_dto);
+            }
             else {
                 throw Error('Invalid action found');
             }
         }
         catch (error) {
+            console.log(error);
             core.setFailed(error.message);
         }
     });

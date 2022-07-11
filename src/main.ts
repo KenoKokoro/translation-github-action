@@ -68,6 +68,13 @@ async function pull(strings_api: StringLibrary, request_dto: RequestDto) {
   core.setOutput('outcome', 'continue');
 }
 
+async function download(strings_api: StringLibrary, request_dto: RequestDto) {
+  const content = await strings_api.download(request_dto);
+  await helpers.extract_zip_file(request_dto.source_root_folder, content);
+  core.setOutput('outcome', 'continue');
+}
+
+
 async function run() {
   try {
     const request_dto = validation.validateRequest();
@@ -77,10 +84,13 @@ async function run() {
       await push(easytranslate_api.strings(), request_dto);
     } else if (request_dto.action === 'pull') {
       await pull(easytranslate_api.strings(), request_dto);
+    } else if (request_dto.action === 'download') {
+      await download(easytranslate_api.strings(), request_dto);
     } else {
       throw Error('Invalid action found');
     }
   } catch (error: any) {
+    console.log(error);
     core.setFailed(error.message);
   }
 }

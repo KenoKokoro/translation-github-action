@@ -5,7 +5,7 @@ const core = require('@actions/core');
 core.setSecret('access_token');
 const validate_action = () => {
     const action = validate_not_empty(core.getInput('easytranslate_action'), 'easytranslate_action');
-    if (['pull', 'push'].includes(action) === false) {
+    if (['pull', 'push', 'download'].includes(action) === false) {
         throw Error(`Invalid value ${action} given for easytranslate_action`);
     }
     return action;
@@ -21,6 +21,16 @@ const validate_target_languages = () => {
 };
 const validate_translation_paths = () => {
     return validate_not_empty(core.getInput('translation_file_paths'), 'translation_file_paths').split(',');
+};
+const validate_download_strings_format = (action) => {
+    if (action !== 'download') {
+        return '';
+    }
+    const value = validate_not_empty(core.getInput('download_strings_format'), 'download_strings_format');
+    if (!['flat', 'nested'].includes(value)) {
+        throw Error(`Invalid value ${value} given for download_strings_format`);
+    }
+    return value;
 };
 const validateApiConstructor = () => {
     const access_token = validate_not_empty(core.getInput('access_token'), 'access_token');
@@ -44,14 +54,16 @@ const validate_not_empty = (input, key) => {
 const validateRequest = () => {
     const source_language = validate_source_language();
     const target_languages = validate_target_languages();
+    const action = validate_action();
     return {
-        action: validate_action(),
+        action,
         source_root_folder: validate_source_root(),
-        source_language: source_language,
-        target_languages: target_languages,
+        source_language,
+        target_languages,
         translation_paths: validate_translation_paths(),
         all_languages: target_languages.concat(source_language),
-        follow_symlinks: true
+        follow_symlinks: true,
+        download_strings_format: validate_download_strings_format(action)
     };
 };
 exports.validateRequest = validateRequest;

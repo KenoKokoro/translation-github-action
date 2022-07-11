@@ -1,8 +1,31 @@
+import * as Buffer from "buffer";
+
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 const isEqual = require('lodash.isequal');
+const encoding = 'utf8';
+const {Parse} = require('unzipper');
 
-export const find_language_code_from_file_path = (path: string, all_languages: string[]): string => {
+export function extract_zip_file(root_folder: string, content: Buffer): Promise<any> {
+  const path = `${root_folder}/action.zip`;
+  fs.writeFileSync(path, content);
+
+  const stream = fs.createReadStream(path).pipe(Parse());
+
+  return new Promise((resolve, reject) => {
+    stream.on('entry', (entry) => {
+      const writeStream = fs.createWriteStream(`${root_folder}/${entry.path}`);
+      return entry.pipe(writeStream);
+    });
+    stream.on('finish', () => {
+      fs.rmSync(path);
+      resolve({});
+    });
+    stream.on('error', (error) => reject(error));
+  });
+}
+
+export function find_language_code_from_file_path(path: string, all_languages: string[]): string {
   for (const language of all_languages) {
     if (path.includes(`/${language}/`)) {
       return language;
@@ -14,13 +37,12 @@ export const find_language_code_from_file_path = (path: string, all_languages: s
 
 export const path = require('path');
 
-export const create_files_from_strings = async (files_to_strings_map = {}): Promise<string[]> => {
+export async function create_files_from_strings(files_to_strings_map = {}): Promise<string[]> {
   const modified_files: string[] = [];
 
   for (const key in files_to_strings_map) {
     const object = files_to_strings_map[key];
     await mkdirp(object.folder_path);
-    const encoding = 'utf8';
 
     if (fs.existsSync(object.absolute_path)) {
       const existing_content = fs.readFileSync(object.absolute_path, encoding);
