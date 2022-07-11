@@ -1,4 +1,5 @@
 {
   "global.welcome": "Welcome {{username}}",
-  "global.email": "This is your email label:"
+  "global.email": "This is your email label:",
+  "global.hey": "hey hey to you!"
 }
